@@ -13,7 +13,7 @@ export function calcularSituacao(
   }
   const abs = Math.abs(valor);
   if (abs >= config.critico_min) {
-    return { situacao: "Crítico", observacao: "ACIMA DO PERMITIDO!" };
+    return { situacao: "Crítico", observacao: null };
   }
   if (abs >= config.alerta_min) {
     return { situacao: "Alerta", observacao: null };
