@@ -260,11 +260,11 @@ export default function AfericoesPage() {
                     type="text"
                     inputMode="decimal"
                     className="w-full"
-                    placeholder="Ex: 20"
+                    placeholder="Ex: 20 ou 20,200"
                     value={litrosAferidos}
                     onChange={(e) => {
                       const v = e.target.value;
-                      if (/^[0-9]*[.,]?[0-9]*$/.test(v)) setLitrosAferidos(v);
+                      if (/^[0-9]*[.,]?[0-9]{0,3}$/.test(v)) setLitrosAferidos(v);
                     }}
                   />
                 </div>

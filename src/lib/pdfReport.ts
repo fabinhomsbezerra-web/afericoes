@@ -1,6 +1,6 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { AfericaoCompleta } from "./types";
+import { AfericaoCompleta, formatLitros } from "./types";
 import { createClient } from "./supabase/client";
 
 const TZ = "America/Sao_Paulo";
@@ -94,7 +94,7 @@ export async function gerarRelatorioPDF(
       r.bico.produto,
       r.bico.bomba.numero,
       r.bico.numero,
-      r.litros_aferidos !== null && r.litros_aferidos !== undefined ? String(r.litros_aferidos) : "-",
+      r.litros_aferidos !== null && r.litros_aferidos !== undefined ? formatLitros(r.litros_aferidos) : "-",
       r.valor_label,
       r.situacao,
       r.observacao ?? "",

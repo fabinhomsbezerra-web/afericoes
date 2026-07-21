@@ -88,3 +88,9 @@ export const VALOR_OPCOES: { label: string; valor: number | null }[] = [
   { label: "-200", valor: -200 },
   { label: "Menor que -200", valor: -250 },
 ];
+
+/** Formata litros com vírgula decimal e 3 casas, ex: 20,200 */
+export function formatLitros(valor: number | null | undefined): string {
+  if (valor === null || valor === undefined || isNaN(valor)) return "-";
+  return valor.toLocaleString("pt-BR", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+}

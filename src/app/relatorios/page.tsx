@@ -105,20 +105,20 @@ export default function RelatoriosPage() {
         </div>
 
         <div className="space-y-3">
-          <div>
+          <div className="pr-1">
             <label className="text-sm font-semibold block mb-1">Data início</label>
             <input
               type="date"
-              className="w-full"
+              style={{ width: "calc(100% - 4px)" }}
               value={dataInicio}
               onChange={(e) => setDataInicio(e.target.value)}
             />
           </div>
-          <div>
+          <div className="pr-1">
             <label className="text-sm font-semibold block mb-1">Data fim</label>
             <input
               type="date"
-              className="w-full"
+              style={{ width: "calc(100% - 4px)" }}
               value={dataFim}
               onChange={(e) => setDataFim(e.target.value)}
             />

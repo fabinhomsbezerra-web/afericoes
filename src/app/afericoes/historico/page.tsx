@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Posto, Bomba, Bico, PRODUTOS } from "@/lib/types";
+import { Posto, Bomba, Bico, PRODUTOS, formatLitros } from "@/lib/types";
 import { situacaoCor } from "@/lib/afericaoStatus";
 import SwipeToDelete from "@/components/SwipeToDelete";
 
@@ -179,7 +179,7 @@ export default function HistoricoPage() {
                   {r.bico?.bomba?.posto?.nome} · Bomba {r.bico?.bomba?.numero} · Bico {r.bico?.numero}
                 </p>
                 <p className="text-sm text-slate-500 dark:text-slate-400">
-                  {r.bico?.produto} · {r.litros_aferidos ? `${r.litros_aferidos}L · ` : ""}
+                  {r.bico?.produto} · {r.litros_aferidos ? `${formatLitros(r.litros_aferidos)}L · ` : ""}
                   {r.valor_label} ·{" "}
                   {new Date(r.data_afericao).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}
                 </p>
