@@ -145,6 +145,7 @@ export async function gerarRelatorioPDF(
       `POSTO: ${r.bico.bomba.posto.nome}`,
       `BOMBA: ${r.bico.bomba.numero}`,
       `BICO: ${r.bico.numero}`,
+      `PRODUTO: ${r.bico.produto}`,
     ];
 
     const itens: { tipo: string; path: string | null }[] = [

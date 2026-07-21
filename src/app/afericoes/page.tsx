@@ -21,6 +21,7 @@ export default function AfericoesPage() {
   const [bicoId, setBicoId] = useState("");
   const [valorLabel, setValorLabel] = useState<string>("");
   const [interditado, setInterditado] = useState(false);
+  const [observacaoManual, setObservacaoManual] = useState("");
   const [fotoAfericao, setFotoAfericao] = useState<File | null>(null);
   const [fotoComprovante, setFotoComprovante] = useState<File | null>(null);
   const [salvando, setSalvando] = useState(false);
@@ -85,6 +86,7 @@ export default function AfericoesPage() {
   function limparParaProximo() {
     setValorLabel("");
     setInterditado(false);
+    setObservacaoManual("");
     setFotoAfericao(null);
     setFotoComprovante(null);
     setFotosResetKey((k) => k + 1);
@@ -122,11 +124,14 @@ export default function AfericoesPage() {
       if (fotoComprovante) fotoComprovantePath = await uploadFoto(fotoComprovante, "comprovante");
 
       const { data: userData } = await supabase.auth.getUser();
-      const { situacao, observacao } = calcularSituacao(
+      const { situacao, observacao: observacaoAuto } = calcularSituacao(
         interditado ? null : opcaoSelecionada?.valor ?? null,
         interditado,
         config
       );
+      const manual = observacaoManual.trim();
+      const observacao =
+        observacaoAuto && manual ? `${observacaoAuto} ${manual}` : observacaoAuto || manual || null;
 
       const { error } = await supabase.from("afericoes").insert({
         bico_id: bicoId,
@@ -261,6 +266,17 @@ export default function AfericoesPage() {
                     Situação: {previa.situacao} {previa.observacao ? `· ${previa.observacao}` : ""}
                   </div>
                 )}
+
+                <div>
+                  <label className="text-sm font-semibold block mb-1">Observação (opcional)</label>
+                  <textarea
+                    className="w-full"
+                    rows={2}
+                    placeholder="Ex: bomba com vazamento, bico substituído, etc."
+                    value={observacaoManual}
+                    onChange={(e) => setObservacaoManual(e.target.value)}
+                  />
+                </div>
               </div>
 
               <div className="card space-y-4">
