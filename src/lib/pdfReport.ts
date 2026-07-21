@@ -3,9 +3,16 @@ import autoTable from "jspdf-autotable";
 import { AfericaoCompleta } from "./types";
 import { createClient } from "./supabase/client";
 
+const TZ = "America/Sao_Paulo";
+
 function fmtData(iso: string) {
   const d = new Date(iso);
-  return d.toLocaleDateString("pt-BR");
+  return d.toLocaleDateString("pt-BR", { timeZone: TZ });
+}
+
+function fmtDataHora(iso: string) {
+  const d = new Date(iso);
+  return d.toLocaleString("pt-BR", { timeZone: TZ });
 }
 
 async function pathToDataUrl(path: string): Promise<string | null> {
@@ -64,7 +71,7 @@ export async function gerarRelatorioPDF(
   doc.text("Relatório de Aferições", margin, 50);
   doc.setFontSize(10);
   doc.setTextColor(100);
-  doc.text(`Gerado em ${new Date().toLocaleString("pt-BR")}`, margin, 66);
+  doc.text(`Gerado em ${fmtDataHora(new Date().toISOString())}`, margin, 66);
   doc.setTextColor(0);
 
   // Agrupa por posto para reproduzir o formato do relatório original
@@ -124,15 +131,13 @@ export async function gerarRelatorioPDF(
     }
   }
 
-  // ---------- SEGUNDA PARTE: IMAGENS ----------
-  doc.addPage();
-  doc.setFontSize(16);
-  doc.text("Anexos Fotográficos", margin, 50);
-  let y = 75;
+  // ---------- SEGUNDA PARTE: IMAGENS (uma folha inteira por foto) ----------
+  const pageHeight = doc.internal.pageSize.getHeight();
   const maxImgWidth = pageWidth - margin * 2;
-  const maxImgHeight = 320;
 
-  const total = ordenados.length;
+  const total = ordenados.reduce((acc, r) => {
+    return acc + (r.foto_afericao_path ? 1 : 0) + (r.foto_comprovante_path ? 1 : 0);
+  }, 0);
   let done = 0;
 
   for (const r of ordenados) {
@@ -150,47 +155,50 @@ export async function gerarRelatorioPDF(
     for (const item of itens) {
       if (!item.path) continue;
 
-      if (y > 760) {
-        doc.addPage();
-        y = 50;
-      }
+      doc.addPage();
+      let y = margin + 20;
 
-      doc.setFontSize(10);
+      // Título preenchendo o topo da folha
+      doc.setFontSize(14);
       doc.setFont("helvetica", "bold");
-      cabecalho.forEach((linha, i) => {
-        doc.text(linha, margin, y + i * 13);
+      cabecalho.forEach((linha) => {
+        doc.text(linha, margin, y);
+        y += 20;
       });
-      doc.text(`TIPO: ${item.tipo}`, margin, y + cabecalho.length * 13);
+      doc.setFontSize(13);
+      doc.text(`TIPO: ${item.tipo}`, margin, y);
       doc.setFont("helvetica", "normal");
-      y += cabecalho.length * 13 + 20;
+      doc.setFontSize(10);
+      doc.setTextColor(100);
+      doc.text(fmtDataHora(r.data_afericao), margin, y + 16);
+      doc.setTextColor(0);
+      y += 40;
 
       onProgress?.(Math.round((done / Math.max(total, 1)) * 100), `Carregando imagens...`);
       const dataUrl = await pathToDataUrl(item.path);
 
       if (dataUrl) {
         const { w, h } = await getImageDims(dataUrl);
+        const maxImgHeight = pageHeight - y - margin;
         let drawW = maxImgWidth;
         let drawH = (h / w) * drawW;
         if (drawH > maxImgHeight) {
           drawH = maxImgHeight;
           drawW = (w / h) * drawH;
         }
-        if (y + drawH > 790) {
-          doc.addPage();
-          y = 50;
-        }
+        // centraliza horizontalmente, preenchendo o restante da folha
+        const drawX = margin + (maxImgWidth - drawW) / 2;
         const format = dataUrl.includes("image/png") ? "PNG" : "JPEG";
-        doc.addImage(dataUrl, format, margin, y, drawW, drawH);
-        y += drawH + 30;
+        doc.addImage(dataUrl, format, drawX, y, drawW, drawH);
       } else {
         doc.setTextColor(200, 0, 0);
         doc.text("(Não foi possível carregar a imagem)", margin, y);
         doc.setTextColor(0);
-        y += 25;
       }
+
+      done += 1;
+      onProgress?.(Math.round((done / Math.max(total, 1)) * 100), `Processando imagens...`);
     }
-    done += 1;
-    onProgress?.(Math.round((done / Math.max(total, 1)) * 100), `Processando registros...`);
   }
 
   onProgress?.(100, "Concluído");

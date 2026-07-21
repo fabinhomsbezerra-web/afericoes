@@ -97,7 +97,8 @@ export default function InicioPage() {
                   {r.bico?.bomba?.posto?.nome} · Bomba {r.bico?.bomba?.numero} · Bico {r.bico?.numero}
                 </p>
                 <p className="text-sm text-slate-500 dark:text-slate-400">
-                  {r.bico?.produto} · {r.valor_label} · {new Date(r.data_afericao).toLocaleString("pt-BR")}
+                  {r.bico?.produto} · {r.valor_label} ·{" "}
+                  {new Date(r.data_afericao).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}
                 </p>
               </div>
               <span

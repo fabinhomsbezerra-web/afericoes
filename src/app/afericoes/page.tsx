@@ -26,6 +26,13 @@ export default function AfericoesPage() {
   const [salvando, setSalvando] = useState(false);
   const [mensagem, setMensagem] = useState<string | null>(null);
   const [salvosNaSessao, setSalvosNaSessao] = useState(0);
+  const [fotosResetKey, setFotosResetKey] = useState(0);
+
+  useEffect(() => {
+    if (!mensagem) return;
+    const t = setTimeout(() => setMensagem(null), 4000);
+    return () => clearTimeout(t);
+  }, [mensagem]);
 
   useEffect(() => {
     (async () => {
@@ -80,6 +87,7 @@ export default function AfericoesPage() {
     setInterditado(false);
     setFotoAfericao(null);
     setFotoComprovante(null);
+    setFotosResetKey((k) => k + 1);
     // mantém posto/bomba/bico selecionados para agilizar o próximo bico
   }
 
@@ -256,8 +264,8 @@ export default function AfericoesPage() {
               </div>
 
               <div className="card space-y-4">
-                <PhotoInput label="5. Foto da Aferição" onChange={setFotoAfericao} />
-                <PhotoInput label="6. Foto do Comprovante" onChange={setFotoComprovante} />
+                <PhotoInput key={`afericao-${fotosResetKey}`} label="5. Foto da Aferição" onChange={setFotoAfericao} />
+                <PhotoInput key={`comprovante-${fotosResetKey}`} label="6. Foto do Comprovante" onChange={setFotoComprovante} />
               </div>
 
               {mensagem && (

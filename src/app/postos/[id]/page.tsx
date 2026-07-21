@@ -59,7 +59,7 @@ export default function PostoDetalhePage() {
       numero: form.numero.trim(),
       produto: form.produto || PRODUTOS[0],
     });
-    setBicoForms((prev) => ({ ...prev, [bombaId]: { numero: "", produto: PRODUTOS[0] } }));
+    setBicoForms((prev) => ({ ...prev, [bombaId]: { numero: "", produto: form.produto } }));
     carregar();
   }
 
