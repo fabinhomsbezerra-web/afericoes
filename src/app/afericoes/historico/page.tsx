@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Posto, Bomba, Bico, PRODUTOS } from "@/lib/types";
 import { situacaoCor } from "@/lib/afericaoStatus";
+import SwipeToDelete from "@/components/SwipeToDelete";
 
 export default function HistoricoPage() {
   const supabase = createClient();
@@ -86,6 +87,18 @@ export default function HistoricoPage() {
     setCarregando(false);
   }
 
+  async function excluir(registro: any) {
+    if (!confirm("Excluir esta aferição permanentemente? Essa ação não pode ser desfeita.")) return;
+    const caminhos = [registro.foto_afericao_path, registro.foto_comprovante_path].filter(
+      (p): p is string => !!p
+    );
+    if (caminhos.length > 0) {
+      await supabase.storage.from("afericoes").remove(caminhos);
+    }
+    await supabase.from("afericoes").delete().eq("id", registro.id);
+    setRegistros((prev) => prev.filter((r) => r.id !== registro.id));
+  }
+
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-bold">Histórico de Aferições</h1>
@@ -155,22 +168,27 @@ export default function HistoricoPage() {
         {!carregando && registros.length === 0 && (
           <p className="text-slate-500 dark:text-slate-400 text-center py-8">Nenhuma aferição encontrada.</p>
         )}
+        {!carregando && registros.length > 0 && (
+          <p className="text-xs text-slate-400 dark:text-slate-500">← Arraste um item para o lado para excluir</p>
+        )}
         {registros.map((r) => (
-          <div key={r.id} className="card flex items-center justify-between gap-3">
-            <div>
-              <p className="font-medium">
-                {r.bico?.bomba?.posto?.nome} · Bomba {r.bico?.bomba?.numero} · Bico {r.bico?.numero}
-              </p>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                {r.bico?.produto} · {r.valor_label} ·{" "}
-                {new Date(r.data_afericao).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}
-              </p>
-              {r.observacao && <p className="text-sm font-semibold text-crit">{r.observacao}</p>}
+          <SwipeToDelete key={r.id} onDelete={() => excluir(r)}>
+            <div className="card flex items-center justify-between gap-3">
+              <div>
+                <p className="font-medium">
+                  {r.bico?.bomba?.posto?.nome} · Bomba {r.bico?.bomba?.numero} · Bico {r.bico?.numero}
+                </p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  {r.bico?.produto} · {r.valor_label} ·{" "}
+                  {new Date(r.data_afericao).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}
+                </p>
+                {r.observacao && <p className="text-sm font-semibold text-crit">{r.observacao}</p>}
+              </div>
+              <span className={`text-xs font-semibold px-2 py-1 rounded-full border shrink-0 ${situacaoCor(r.situacao)}`}>
+                {r.situacao}
+              </span>
             </div>
-            <span className={`text-xs font-semibold px-2 py-1 rounded-full border shrink-0 ${situacaoCor(r.situacao)}`}>
-              {r.situacao}
-            </span>
-          </div>
+          </SwipeToDelete>
         ))}
       </div>
     </div>
