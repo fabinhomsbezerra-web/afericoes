@@ -1,4 +1,4 @@
-const CACHE = "afericoes-v1";
+const CACHE = "afericoes-v2";
 const ASSETS = ["/", "/manifest.json"];
 
 self.addEventListener("install", (event) => {
