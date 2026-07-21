@@ -27,6 +27,7 @@ export type Situacao = "Regular" | "Alerta" | "Crítico" | "Interditado";
 export type Afericao = {
   id: string;
   bico_id: string;
+  litros_aferidos: number | null;
   valor: number | null;
   valor_label: string;
   situacao: Situacao;

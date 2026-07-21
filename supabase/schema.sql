@@ -55,6 +55,7 @@ on conflict (id) do nothing;
 create table if not exists public.afericoes (
   id uuid primary key default uuid_generate_v4(),
   bico_id uuid not null references public.bicos(id) on delete cascade,
+  litros_aferidos numeric, -- quantidade de litros usada na aferição (ex: 20)
   valor int, -- valor numérico em mL (pode ser null se interditado)
   valor_label text not null, -- rótulo exibido, ex: '+80', '-40', 'Maior que +200'
   situacao text not null, -- 'Regular' | 'Alerta' | 'Crítico' | 'Interditado'

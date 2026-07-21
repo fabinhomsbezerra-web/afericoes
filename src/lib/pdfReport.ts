@@ -94,6 +94,7 @@ export async function gerarRelatorioPDF(
       r.bico.produto,
       r.bico.bomba.numero,
       r.bico.numero,
+      r.litros_aferidos !== null && r.litros_aferidos !== undefined ? String(r.litros_aferidos) : "-",
       r.valor_label,
       r.situacao,
       r.observacao ?? "",
@@ -103,12 +104,23 @@ export async function gerarRelatorioPDF(
     autoTable(doc, {
       startY: cursorY,
       margin: { left: margin, right: margin },
-      head: [["Produto", "Bomba", "Bico", "Litros Aferidor", "Situação", "Observações", "Data"]],
+      tableWidth: pageWidth - margin * 2,
+      head: [["Produto", "Bomba", "Bico", "Litros Aferidos", "Total da Aferição", "Situação", "Observações", "Data"]],
       body,
-      styles: { fontSize: 8, cellPadding: 4 },
-      headStyles: { fillColor: [29, 78, 216] },
+      styles: { fontSize: 8, cellPadding: 4, valign: "middle" },
+      headStyles: { fillColor: [29, 78, 216], halign: "center" },
+      columnStyles: {
+        0: { cellWidth: 85 },
+        1: { cellWidth: 38, halign: "center" },
+        2: { cellWidth: 32, halign: "center" },
+        3: { cellWidth: 60, halign: "center" },
+        4: { cellWidth: 65, halign: "center" },
+        5: { cellWidth: 55, halign: "center" },
+        6: { cellWidth: 130 },
+        7: { cellWidth: 50, halign: "center" },
+      },
       didParseCell: (data) => {
-        if (data.section === "body" && data.column.index === 4) {
+        if (data.section === "body" && data.column.index === 5) {
           const val = String(data.cell.raw);
           if (val === "Crítico" || val === "Interditado") {
             data.cell.styles.textColor = [220, 38, 38];

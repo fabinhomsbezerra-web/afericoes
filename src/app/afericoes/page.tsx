@@ -20,6 +20,7 @@ export default function AfericoesPage() {
   const [bombaId, setBombaId] = useState("");
   const [bicoId, setBicoId] = useState("");
   const [valorLabel, setValorLabel] = useState<string>("");
+  const [litrosAferidos, setLitrosAferidos] = useState<string>("20");
   const [interditado, setInterditado] = useState(false);
   const [observacaoManual, setObservacaoManual] = useState("");
   const [fotoAfericao, setFotoAfericao] = useState<File | null>(null);
@@ -133,8 +134,11 @@ export default function AfericoesPage() {
       const observacao =
         observacaoAuto && manual ? `${observacaoAuto} ${manual}` : observacaoAuto || manual || null;
 
+      const litros = litrosAferidos.trim() ? Number(litrosAferidos.replace(",", ".")) : null;
+
       const { error } = await supabase.from("afericoes").insert({
         bico_id: bicoId,
+        litros_aferidos: litros !== null && !isNaN(litros) ? litros : null,
         valor: interditado ? null : opcaoSelecionada?.valor ?? null,
         valor_label: interditado ? "—" : valorLabel,
         situacao,
@@ -249,6 +253,21 @@ export default function AfericoesPage() {
                   />
                   Bico interditado (sem condições de aferir)
                 </label>
+
+                <div>
+                  <label className="text-sm font-semibold block mb-1">Quantidade de litros aferidos</label>
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    className="w-full"
+                    placeholder="Ex: 20"
+                    value={litrosAferidos}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      if (/^[0-9]*[.,]?[0-9]*$/.test(v)) setLitrosAferidos(v);
+                    }}
+                  />
+                </div>
 
                 {!interditado && (
                   <select className="w-full" value={valorLabel} onChange={(e) => setValorLabel(e.target.value)} required>

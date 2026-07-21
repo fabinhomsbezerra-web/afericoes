@@ -10,6 +10,8 @@ export default function ConfiguracoesPage() {
   const { theme, toggle } = useTheme();
 
   const [config, setConfig] = useState<Configuracoes>({ id: 1, alerta_min: 100, critico_min: 150 });
+  const [alertaTexto, setAlertaTexto] = useState("100");
+  const [criticoTexto, setCriticoTexto] = useState("150");
   const [email, setEmail] = useState("");
   const [salvando, setSalvando] = useState(false);
   const [mensagem, setMensagem] = useState<string | null>(null);
@@ -24,19 +26,32 @@ export default function ConfiguracoesPage() {
       .select("*")
       .eq("id", 1)
       .single()
-      .then(({ data }) => data && setConfig(data as Configuracoes));
+      .then(({ data }) => {
+        if (!data) return;
+        const c = data as Configuracoes;
+        setConfig(c);
+        setAlertaTexto(String(c.alerta_min));
+        setCriticoTexto(String(c.critico_min));
+      });
     supabase.auth.getUser().then(({ data }) => setEmail(data.user?.email ?? ""));
   }, []);
 
   async function salvar(e: React.FormEvent) {
     e.preventDefault();
+    const alerta = Number(alertaTexto);
+    const critico = Number(criticoTexto);
+    if (alertaTexto.trim() === "" || isNaN(alerta) || criticoTexto.trim() === "" || isNaN(critico)) {
+      setMensagem("Preencha os dois valores corretamente.");
+      return;
+    }
     setSalvando(true);
     setMensagem(null);
     const { error } = await supabase
       .from("configuracoes")
-      .update({ alerta_min: config.alerta_min, critico_min: config.critico_min })
+      .update({ alerta_min: alerta, critico_min: critico })
       .eq("id", 1);
     setSalvando(false);
+    if (!error) setConfig({ ...config, alerta_min: alerta, critico_min: critico });
     setMensagem(error ? `Erro: ${error.message}` : "✅ Configurações salvas.");
   }
 
@@ -107,19 +122,25 @@ export default function ConfiguracoesPage() {
         <div>
           <label className="text-sm font-semibold block mb-1">Alerta a partir de (mL)</label>
           <input
-            type="number"
+            type="text"
+            inputMode="numeric"
             className="w-full"
-            value={config.alerta_min}
-            onChange={(e) => setConfig({ ...config, alerta_min: Number(e.target.value) })}
+            value={alertaTexto}
+            onChange={(e) => {
+              if (/^[0-9]*$/.test(e.target.value)) setAlertaTexto(e.target.value);
+            }}
           />
         </div>
         <div>
           <label className="text-sm font-semibold block mb-1">Crítico a partir de (mL)</label>
           <input
-            type="number"
+            type="text"
+            inputMode="numeric"
             className="w-full"
-            value={config.critico_min}
-            onChange={(e) => setConfig({ ...config, critico_min: Number(e.target.value) })}
+            value={criticoTexto}
+            onChange={(e) => {
+              if (/^[0-9]*$/.test(e.target.value)) setCriticoTexto(e.target.value);
+            }}
           />
         </div>
         <button type="submit" disabled={salvando} className="btn-primary w-full">

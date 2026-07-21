@@ -105,11 +105,11 @@ export default function RelatoriosPage() {
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-          <div>
+          <div className="min-w-0">
             <label className="text-sm font-semibold block mb-1">Data início</label>
             <input type="date" className="w-full" value={dataInicio} onChange={(e) => setDataInicio(e.target.value)} />
           </div>
-          <div>
+          <div className="min-w-0">
             <label className="text-sm font-semibold block mb-1">Data fim</label>
             <input type="date" className="w-full" value={dataFim} onChange={(e) => setDataFim(e.target.value)} />
           </div>
