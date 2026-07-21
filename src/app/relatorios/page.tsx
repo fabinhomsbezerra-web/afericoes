@@ -83,7 +83,7 @@ export default function RelatoriosPage() {
         Gere um único PDF com a tabela de todas as aferições e as fotos anexadas.
       </p>
 
-      <div className="card space-y-3 overflow-hidden">
+      <div className="card space-y-3">
         <div>
           <label className="text-sm font-semibold block mb-2">Postos (deixe vazio para todos)</label>
           <div className="flex flex-wrap gap-2">
@@ -104,30 +104,24 @@ export default function RelatoriosPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div className="min-w-0 max-w-full">
+        <div className="space-y-3">
+          <div>
             <label className="text-sm font-semibold block mb-1">Data início</label>
-            <div className="overflow-hidden rounded-xl max-w-full">
-              <input
-                type="date"
-                style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box", display: "block" }}
-                className="py-2"
-                value={dataInicio}
-                onChange={(e) => setDataInicio(e.target.value)}
-              />
-            </div>
+            <input
+              type="date"
+              className="w-full"
+              value={dataInicio}
+              onChange={(e) => setDataInicio(e.target.value)}
+            />
           </div>
-          <div className="min-w-0 max-w-full">
+          <div>
             <label className="text-sm font-semibold block mb-1">Data fim</label>
-            <div className="overflow-hidden rounded-xl max-w-full">
-              <input
-                type="date"
-                style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box", display: "block" }}
-                className="py-2"
-                value={dataFim}
-                onChange={(e) => setDataFim(e.target.value)}
-              />
-            </div>
+            <input
+              type="date"
+              className="w-full"
+              value={dataFim}
+              onChange={(e) => setDataFim(e.target.value)}
+            />
           </div>
         </div>
       </div>
