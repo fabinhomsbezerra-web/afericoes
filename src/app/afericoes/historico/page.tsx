@@ -151,11 +151,25 @@ export default function HistoricoPage() {
           </div>
           <div>
             <label className="text-sm font-semibold block mb-1">Data início</label>
-            <input type="date" className="w-full" value={dataInicio} onChange={(e) => setDataInicio(e.target.value)} />
+            <div className="px-4">
+              <input
+                type="date"
+                className="w-full"
+                value={dataInicio}
+                onChange={(e) => setDataInicio(e.target.value)}
+              />
+            </div>
           </div>
           <div>
             <label className="text-sm font-semibold block mb-1">Data fim</label>
-            <input type="date" className="w-full" value={dataFim} onChange={(e) => setDataFim(e.target.value)} />
+            <div className="px-4">
+              <input
+                type="date"
+                className="w-full"
+                value={dataFim}
+                onChange={(e) => setDataFim(e.target.value)}
+              />
+            </div>
           </div>
         </div>
         <button onClick={buscar} className="btn-primary w-full">
