@@ -105,7 +105,7 @@ export default function RelatoriosPage() {
         </div>
 
         <div className="space-y-3">
-          <div className="px-2">
+          <div className="px-5">
             <label className="text-sm font-semibold block mb-1">Data início</label>
             <input
               type="date"
@@ -114,7 +114,7 @@ export default function RelatoriosPage() {
               onChange={(e) => setDataInicio(e.target.value)}
             />
           </div>
-          <div className="px-2">
+          <div className="px-5">
             <label className="text-sm font-semibold block mb-1">Data fim</label>
             <input
               type="date"
