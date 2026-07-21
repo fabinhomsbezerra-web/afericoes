@@ -183,7 +183,7 @@ export async function gerarRelatorioPDF(
       doc.setFont("helvetica", "normal");
       doc.setFontSize(10);
       doc.setTextColor(100);
-      doc.text(fmtDataHora(r.data_afericao), margin, y + 16);
+      doc.text(fmtData(r.data_afericao), margin, y + 16);
       doc.setTextColor(0);
       y += 40;
 
